@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DOM Practice</title>
+    <style>
+        .container {
+            padding: 20px;
+            border: 2px solid black;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 id="mainHeading">Original Heading</h1>
+
+    <p>This is paragraph 1.</p>
+    <p>This is paragraph 2.</p>
+    <p>This is paragraph 3.</p>
+
+    <div class="container">
+        This is the first container div.
+    </div>
+
+    <div class="container">
+        This is another container div.
+    </div>
+
+    <script>
+        // 1️⃣ Select h1 by id and change text
+        const heading = document.getElementById("mainHeading");
+        heading.textContent = "Welcome to the DOM World!";
+
+        // 2️⃣ Select all p elements and change text color to blue
+        const paragraphs = document.getElementsByTagName("p");
+        for (let i = 0; i < paragraphs.length; i++) {
+            paragraphs[i].style.color = "blue";
+        }
+
+        // 3️⃣ Select first div with class 'container' and change background color
+        const firstContainer = document.querySelector(".container");
+        firstContainer.style.backgroundColor = "yellow";
+    </script>
+
+</body>
+</html>

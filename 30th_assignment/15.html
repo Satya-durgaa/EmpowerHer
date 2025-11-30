@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>L2 - Dynamic To-Do List</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 24px;
+      max-width: 700px;
+      margin: auto;
+    }
+
+    h1 { margin-bottom: 10px; }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    #taskInput {
+      flex: 1;
+      padding: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 8px 12px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+      margin-top: 12px;
+    }
+
+    li.task-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      background: #fafafa;
+    }
+
+    .task-text {
+      flex: 1;
+      word-break: break-word;
+    }
+
+    .task-text.completed {
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+
+    .controls {
+      display: flex;
+      gap: 6px;
+    }
+
+    .controls button {
+      padding: 6px 8px;
+      font-size: 13px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .empty-msg {
+      color: #666;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>L2 - Dynamic To-Do List</h1>
+
+  <div class="input-row" aria-label="Add new task">
+    <input id="taskInput" type="text" placeholder="Enter a task" aria-label="Task input" />
+    <button id="addTaskBtn">Add Task</button>
+  </div>
+
+  <div id="listContainer">
+    <ul id="taskList" aria-live="polite" aria-label="To-do list">
+      <!-- Tasks will appear here -->
+    </ul>
+    <div id="emptyMsg" class="empty-msg">No tasks yet. Add your first task above.</div>
+  </div>
+
+  <script>
+    // DOM elements
+    const taskInput = document.getElementById('taskInput');
+    const addTaskBtn = document.getElementById('addTaskBtn');
+    const taskList = document.getElementById('taskList');
+    const emptyMsg = document.getElementById('emptyMsg');
+
+    // Utility: update empty message visibility
+    function updateEmptyMessage() {
+      emptyMsg.style.display = taskList.children.length === 0 ? 'block' : 'none';
+    }
+
+    updateEmptyMessage();
+
+    // Create a task <li> element (returns element)
+    function createTaskElement(text) {
+      const li = document.createElement('li');
+      li.className = 'task-item';
+
+      // Task text span
+      const span = document.createElement('span');
+      span.className = 'task-text';
+      span.textContent = text;
+      span.setAttribute('aria-label', `Task: ${text}`);
+
+      // Controls container
+      const controls = document.createElement('div');
+      controls.className = 'controls';
+
+      // Complete button
+      const completeBtn = document.createElement('button');
+      completeBtn.type = 'button';
+      completeBtn.className = 'complete-btn';
+      completeBtn.textContent = 'Complete';
+      completeBtn.setAttribute('aria-label', `Mark "${text}" as complete`);
+
+      // Delete button
+      const deleteBtn = document.createElement('button');
+      deleteBtn.type = 'button';
+      deleteBtn.className = 'delete-btn';
+      deleteBtn.textContent = 'Delete';
+      deleteBtn.setAttribute('aria-label', `Delete "${text}"`);
+
+      // Assemble
+      controls.appendChild(completeBtn);
+      controls.appendChild(deleteBtn);
+
+      li.appendChild(span);
+      li.appendChild(controls);
+
+      return li;
+    }
+
+    // Add task (validates input)
+    function addTask() {
+      const raw = taskInput.value;
+      const text = raw.trim();
+
+      // Edge case: empty input -> show alert & do nothing
+      if (!text) {
+        alert('Please enter a task before adding.');
+        return;
+      }
+
+      // Create and append new task
+      const taskEl = createTaskElement(text);
+      taskList.appendChild(taskEl);
+
+      // Clear input & focus for next task
+      taskInput.value = '';
+      taskInput.focus();
+
+      updateEmptyMessage();
+    }
+
+    // Event: click Add Task button
+    addTaskBtn.addEventListener('click', addTask);
+
+    // Support pressing Enter in the input to add task
+    taskInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        addTask();
+      }
+    });
+
+    // Event delegation: handle Complete and Delete buttons
+    taskList.addEventListener('click', (e) => {
+      const target = e.target;
+
+      // Find the li ancestor
+      const li = target.closest('li.task-item');
+      if (!li) return; // clicked outside a task row
+
+      // COMPLETE action
+      if (target.classList.contains('complete-btn')) {
+        const span = li.querySelector('.task-text');
+        // Toggle completed state (so user can mark/unmark)
+        span.classList.toggle('completed');
+
+        // Update button label for better UX
+        if (span.classList.contains('completed')) {
+          target.textContent = 'Undo';
+          target.setAttribute('aria-label', `Undo completion for "${span.textContent}"`);
+        } else {
+          target.textContent = 'Complete';
+          target.setAttribute('aria-label', `Mark "${span.textContent}" as complete`);
+        }
+        return;
+      }
+
+      // DELETE action
+      if (target.classList.contains('delete-btn')) {
+        // Remove the task element
+        li.remove();
+        updateEmptyMessage();
+        return;
+      }
+    });
+
+    // Optional: prevent adding tasks that are duplicates (exact match)
+    // If you want duplicate prevention, uncomment below:
+    /*
+    function isDuplicateTask(text) {
+      const tasks = Array.from(taskList.querySelectorAll('.task-text')).map(s => s.textContent.trim());
+      return tasks.includes(text);
+    }
+    // Then call isDuplicateTask(text) inside addTask() and alert user if duplicate.
+    */
+
+  </script>
+</body>
+</html>

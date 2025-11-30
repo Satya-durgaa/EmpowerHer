@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>L1 - Interactive DOM Manipulation</title>
+    <style>
+        #outputBox {
+            width: 300px;
+            padding: 20px;
+            border: 2px solid black;
+            margin-top: 20px;
+            background-color: lightgray;
+        }
+
+        input {
+            margin: 5px 0;
+            padding: 5px;
+        }
+
+        button {
+            margin-right: 10px;
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Interactive DOM Manipulation</h2>
+
+    <!-- Input for color -->
+    <input type="text" id="colorInput" placeholder="Enter color name (e.g., red, blue)">
+    <br>
+
+    <!-- Input for text -->
+    <input type="text" id="textInput" placeholder="Enter text to update">
+    <br><br>
+
+    <!-- Buttons -->
+    <button id="bgBtn">Change Background</button>
+    <button id="textBtn">Update Text</button>
+
+    <!-- Div to display output -->
+    <div id="outputBox">Initial Text inside the box</div>
+
+    <script>
+        const colorInput = document.getElementById("colorInput");
+        const textInput = document.getElementById("textInput");
+        const outputBox = document.getElementById("outputBox");
+
+        const bgButton = document.getElementById("bgBtn");
+        const textButton = document.getElementById("textBtn");
+
+        // Function to check if a color name is valid
+        function isValidColor(color) {
+            const s = new Option().style;
+            s.color = color;
+            return s.color !== "";
+        }
+
+        // 🔹 Change Background Button Click
+        bgButton.addEventListener("click", function () {
+            const color = colorInput.value.trim();
+
+            if (isValidColor(color)) {
+                outputBox.style.backgroundColor = color;
+            } else {
+                alert("Invalid color name!");
+            }
+        });
+
+        // 🔹 Update Text Button Click
+        textButton.addEventListener("click", function () {
+            const text = textInput.value.trim();
+
+            if (text === "") {
+                alert("Please enter some text!");
+            } else {
+                outputBox.textContent = text;
+            }
+        });
+    </script>
+
+</body>
+</html>
