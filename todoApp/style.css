@@ -1,0 +1,107 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background-color: #f4f4f4;
+}
+
+.app {
+  max-width: 600px;
+  margin: 40px auto;
+  background: #ffffff;
+  padding: 20px 25px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+#reload-todos-btn {
+  background-color: #3498db;
+  color: #fff;
+}
+
+.status-text {
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #666;
+}
+
+.todos-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.todo-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fafafa;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.todo-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.todo-title {
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.todo-status.completed {
+  color: green;
+  font-weight: bold;
+}
+
+.todo-status.pending {
+  color: #e67e22;
+  font-weight: bold;
+}
+
+.todo-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-complete {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.btn-delete {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.empty-message {
+  text-align: center;
+  padding: 20px 0;
+  color: #999;
+}
