@@ -1,0 +1,67 @@
+-- SQL CRUD Operations on Relationships (Supabase)
+-- File: relational_crud.txt
+
+-- Step 1: Create Tables with Relationships
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE orders (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE RESTRICT,
+    amount INTEGER NOT NULL,
+    status TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Step 2: Insert Data
+INSERT INTO users (name, email) VALUES
+('Asha', 'asha@gmail.com'),
+('Ravi', 'ravi@gmail.com'),
+('Neha', 'neha@gmail.com'),
+('Kiran', 'kiran@gmail.com'),
+('Meena', 'meena@gmail.com');
+
+INSERT INTO orders (user_id, amount, status) VALUES
+(1, 500, 'placed'),
+(1, 1200, 'shipped'),
+(1, 800, 'delivered'),
+(2, 400, 'placed'),
+(2, 900, 'delivered'),
+(3, 1500, 'placed'),
+(4, 700, 'cancelled'),
+(4, 300, 'placed'),
+(5, 1000, 'delivered');
+
+-- Step 3: Read Data
+SELECT * FROM users;
+SELECT * FROM orders;
+SELECT * FROM orders WHERE user_id = 1;
+
+SELECT u.id, u.name, COUNT(o.id) AS order_count
+FROM users u
+JOIN orders o ON u.id = o.user_id
+GROUP BY u.id, u.name
+HAVING COUNT(o.id) > 1;
+
+SELECT u.id, u.name, SUM(o.amount) AS total_amount
+FROM users u
+JOIN orders o ON u.id = o.user_id
+GROUP BY u.id, u.name;
+
+-- Step 4: Update Data
+UPDATE users SET email = 'asha_new@gmail.com' WHERE id = 1;
+UPDATE orders SET status = 'completed' WHERE user_id = 2;
+UPDATE orders SET amount = 850 WHERE id = 3;
+
+-- Step 5: Delete Data
+DELETE FROM orders WHERE id = 7;
+DELETE FROM orders WHERE user_id = 4;
+DELETE FROM users WHERE id = 1;
+
+-- Step 6: Conceptual Question
+-- Orders should not be stored inside users table because one user can have many orders.
+-- Separate tables avoid redundancy and follow normalization.
